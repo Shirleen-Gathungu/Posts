@@ -11,40 +11,47 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    lateinit var binding:ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
 //    binding =ActivityMainBinding.inflate(layoutInflater)
 //    setContentView(binding.root)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding =ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         fetchPosts()
+
+
     }
 
-fun fetchPosts(){
-    var apiClient = ApiClient.buildApiClient(ApiInterface::class.java)
-    var request = apiClient.getPosts()
+    fun fetchPosts() {
+        var apiClient = ApiClient.buildApiClient(ApiInterface::class.java)
+        var request = apiClient.getPosts()
 
-    request.enqueue(object : Callback<List<Post>> {
-        override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-            if (response.isSuccessful){
-                var posts = response.body()
-                 Toast.makeText(baseContext,"fetched ${posts!!.size} posts",Toast.LENGTH_LONG).show()
-                var postsadapter = PostsRvAdapter(posts)
-                binding.rvPost.layoutManager=LinearLayoutManager(this@MainActivity)
-                binding.rvPost.adapter = postsadapter
-
+        request.enqueue(object : Callback<List<Post>> {
+            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                if (response.isSuccessful) {
+                    var posts = response.body()
+                    Toast.makeText(baseContext, "fetched ${posts!!.size} posts", Toast.LENGTH_LONG)
+                        .show()
+                    displayPosts(posts)
 
 
+
+                }
             }
-        }
 
-        override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+    fun displayPosts(postList: List<Post>) {
+        binding.rvPost.layoutManager = LinearLayoutManager(this)
+        var postAdapter = PostsRvAdapter(postList)
+        binding.rvPost.adapter = postAdapter
+    }
 
-        }
-    })
-}
 }
 
 //fun displayTweets () {
@@ -66,3 +73,4 @@ fun fetchPosts(){
 //    var tweetsAdapter = TweetsAdapter(tweetsList)
 //    binding.rvTweets.layoutManager = LinearLayoutManager(this)
 //    binding.rvTweets.adapter = tweetsAdapter
+//

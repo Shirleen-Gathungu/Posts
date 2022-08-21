@@ -1,5 +1,6 @@
 package com.example.myposts
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.menu.MenuView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myposts.databinding.PostListItemBinding
 
 //class TweetsAdapter(var tweetsList: List<Peopletweets>): RecyclerView.Adapter<PeopletweetsViewHolder>() {
 //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PeopletweetsViewHolder {
@@ -14,44 +16,39 @@ import androidx.recyclerview.widget.RecyclerView
 //        return PeopletweetsViewHolder(itemView)
 //    }
 
-class PostsRvAdapter(var postList:List<Post>): RecyclerView.Adapter<PostViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        var PostView = LayoutInflater.from(parent.context).inflate(R.layout.post_list_item,parent,false)
-        return PostViewHolder(PostView)
-    }
+class PostsRvAdapter(var postList:List<Post>): RecyclerView.Adapter<PostViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+            var binding = PostListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return PostViewHolder(binding)
+        }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-//        var currentTweets = tweetsList.get(position)
+        override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
 //
-//        holder.tvNameOne.text =currentTweets.name
-//        holder.tvatOne.text =currentTweets.at
-//        holder.tvTimeOne.text =currentTweets.time.toString()
-//        holder.tvTweet.text =currentTweets.tweet
+            var posts = postList.get(position)
+            holder.binding.tvUserId.text = posts.userId.toString()
+            holder.binding.tvId2.text = posts.id.toString()
+            holder.binding.tvTitle.text = posts.title
+            holder.binding.tvBody.text = posts.body
+
+            val context = holder.itemView.context
+            holder.binding.cvPost.setOnClickListener {
+                val intent = Intent(context, CommentsActivity::class.java)
+                intent.putExtra("POST_ID", posts.id)
+                context.startActivity(intent)
+            }
 
 
-        var posts = postList.get(position)
+        }
 
-        holder.tvUserId.text = posts.userId.toString()
-        holder.tvId2.text = posts.id.toString()
-        holder.tvTitle.text = posts.title
-        holder.tvBody.text = posts.body
-
-
-
-
+        override fun getItemCount(): Int {
+            return postList.size
+        }
     }
 
-    override fun getItemCount(): Int {
-        return postList.size
-    }
+    class PostViewHolder(var binding:PostListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
 }
 
-class PostViewHolder(itemView: View):  RecyclerView.ViewHolder(itemView){
-    var tvUserId = itemView.findViewById<TextView>(R.id.tvUserId)
-    var tvId2 = itemView.findViewById<TextView>(R.id.tvId2)
-    var tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-    var tvBody = itemView.findViewById<TextView>(R.id.tvBody)
-}
 //
 //class PeopletweetsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 //    var tvNameOne= itemView.findViewById<TextView>(R.id.tvNameOne)
